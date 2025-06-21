@@ -1,6 +1,6 @@
 # Exercice Frontend Senior - Gestionnaire de Tournées Théâtrales
 
-**Durée :** 2 heures  
+**Durée :** 2 heures
 **Niveau :** Senior
 
 ## Contexte
