@@ -4,7 +4,7 @@ export type TourTeam = {
     technicalDirector: string;
     costumeDesigner: string;
   };
-  
+
   export type Tour = {
     id: number;
     showId: number;
@@ -20,4 +20,3 @@ export type TourTeam = {
     team: TourTeam;
     notes: string;
   };
-  
