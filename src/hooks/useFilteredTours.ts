@@ -38,5 +38,3 @@ export const useFilteredTours = (
     return filtered;
   }, [tours, searchQuery, statusFilter]);
 };
-
-export default useFilteredTours;
