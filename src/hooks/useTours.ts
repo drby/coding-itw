@@ -38,7 +38,7 @@ export const useTour = (id: string) => {
       try {
         setLoading(true);
         const tourData = await apiService.getTourById(id);
-        
+
         try {
           // Fetch performances for this tour
           const performances = await apiService.getTourPerformances(id);
@@ -49,7 +49,7 @@ export const useTour = (id: string) => {
           // Don't fail the whole request if performances fail
           // Just log the error and continue with the tour data
         }
-        
+
         setTour(tourData);
         setError(null);
       } catch (err) {

@@ -1,35 +1,71 @@
 import { useState, useMemo, type FC, type ChangeEvent } from 'react';
-import { 
-  Box, 
-  Heading, 
-  Text, 
-  Spinner, 
-  SimpleGrid, 
-  Button, 
-  Badge, 
-  Input
-} from "@chakra-ui/react";
-import { useTours } from "../../hooks/useTours";
+
 import { getStatusColor, getAverageFillRateColor } from "../../utils/colorUtils";
+
+import {
+  Box,
+  Heading,
+  Text,
+  Spinner,
+  SimpleGrid,
+  Button,
+  Badge,
+  Input,
+  Flex,
+  ButtonGroup
+} from "@chakra-ui/react";
+
+import { useTours } from "../../hooks/useTours";
+
+type StatusFilter = 'all' | 'planifiée' | 'en cours' | 'terminée' | 'annulée';
 
 const TourList: FC = () => {
   const { tours, loading, error } = useTours();
+
   const [searchQuery, setSearchQuery] = useState<string>('');
-  
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
-  
+
+  const handleStatusFilter = (status: StatusFilter) => {
+    setStatusFilter(status);
+  };
+
   const filteredTours = useMemo(() => {
-    if (!searchQuery.trim()) return tours;
-    
-    const query = searchQuery.toLowerCase().trim();
-    return tours.filter(tour => 
-      tour.name.toLowerCase().includes(query) || 
-      tour.show.title.toLowerCase().includes(query) ||
-      tour.status.toLowerCase().includes(query)
-    );
-  }, [tours, searchQuery]);
+    let filtered = [...tours];
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(tour => {
+        const normalizedStatus = tour.status.trim().toLowerCase();
+
+        switch (statusFilter) {
+          case 'planifiée':
+            return ['planifiée', 'planifiee', 'planned'].includes(normalizedStatus);
+          case 'en cours':
+            return ['en cours', 'ongoing', 'in progress'].includes(normalizedStatus);
+          case 'terminée':
+            return ['terminée', 'terminee', 'completed'].includes(normalizedStatus);
+          case 'annulée':
+            return ['annulée', 'annulee', 'cancelled', 'canceled'].includes(normalizedStatus);
+          default:
+            return true;
+        }
+      });
+    }
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(tour => 
+        tour.name.toLowerCase().includes(query) || 
+        tour.show.title.toLowerCase().includes(query) ||
+        tour.status.toLowerCase().includes(query)
+      );
+    }
+
+    return filtered;
+  }, [tours, searchQuery, statusFilter]);
 
   if (loading) {
     return (
@@ -57,13 +93,48 @@ const TourList: FC = () => {
     <Box p={5}>
       <Heading mb={4}>Tournées Théâtrales</Heading>
 
-      <Box mb={6}>
-        <Input
-          placeholder="Rechercher une tournée..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-      </Box>
+      <Flex direction={{ base: 'column', md: 'row' }} gap={4} mb={6}>
+        <Box flex="1">
+          <Input
+            placeholder="Rechercher une tournée..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </Box>
+
+        <ButtonGroup attached variant="outline" size="md">
+          <Button
+            colorPalette={statusFilter === 'all' ? 'teal' : 'gray'}
+            onClick={() => handleStatusFilter('all')}
+          >
+            Toutes
+          </Button>
+          <Button 
+            colorPalette={statusFilter === 'planifiée' ? 'blue' : 'gray'}
+            onClick={() => handleStatusFilter('planifiée')}
+          >
+            Planifiées
+          </Button>
+          <Button 
+            colorPalette={statusFilter === 'en cours' ? 'green' : 'gray'}
+            onClick={() => handleStatusFilter('en cours')}
+          >
+            En cours
+          </Button>
+          <Button 
+            colorPalette={statusFilter === 'terminée' ? 'gray' : 'gray'}
+            onClick={() => handleStatusFilter('terminée')}
+          >
+            Terminées
+          </Button>
+          <Button 
+            colorPalette={statusFilter === 'annulée' ? 'red' : 'gray'}
+            onClick={() => handleStatusFilter('annulée')}
+          >
+            Annulées
+          </Button>
+        </ButtonGroup>
+      </Flex>
 
       {tours.length === 0 ? (
         <Text>Aucune tournée trouvée.</Text>

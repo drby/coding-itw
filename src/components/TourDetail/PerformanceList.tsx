@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+
 import {
   Box,
   Heading,
@@ -7,6 +8,7 @@ import {
   Grid,
   SimpleGrid,
 } from "@chakra-ui/react";
+
 import type { Performance } from '../../types/tour.types';
 import { getAverageFillRateColor } from "../../utils/colorUtils";
 
@@ -28,14 +30,13 @@ const PerformanceList: FC<PerformanceListProps> = ({ performances }) => {
       <Heading size="md" mb={4}>Liste des Représentations</Heading>
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
         {performances.map((performance) => {
-          // Ensure values are numbers and handle potential division by zero
           const soldTickets = Number(performance.ticketsSold) || 0;
-          const capacity = Number(performance.capacity) || 1; // Prevent division by zero
+          const capacity = Number(performance.capacity) || 1;
           const ticketPrice = Number(performance.ticketPrice) || 0;
-          
+
           const fillRate = Math.round((soldTickets / capacity) * 100);
           const revenue = soldTickets * ticketPrice;
-          
+
           return (
             <Box
               key={performance.id}
@@ -49,20 +50,20 @@ const PerformanceList: FC<PerformanceListProps> = ({ performances }) => {
                 <Heading size="sm">{new Date(performance.date).toLocaleDateString('fr-FR')}</Heading>
                 <Badge colorPalette={getAverageFillRateColor(fillRate)}>{fillRate}%</Badge>
               </Box>
-              
+
               <Text fontWeight="bold" mb={1}>{performance.city}</Text>
               <Text mb={3}>{performance.venue}</Text>
-              
+
               <Grid templateColumns="1fr 1fr" gap={2} fontSize="sm">
                 <Text>Capacité:</Text>
                 <Text textAlign="right">{performance.capacity}</Text>
-                
+
                 <Text>Billets vendus:</Text>
                 <Text textAlign="right">{performance.ticketsSold}</Text>
-                
+
                 <Text>Prix du billet:</Text>
                 <Text textAlign="right">€{performance.ticketPrice}</Text>
-                
+
                 <Text fontWeight="bold">Revenu:</Text>
                 <Text textAlign="right" fontWeight="bold">€{revenue.toLocaleString()}</Text>
               </Grid>

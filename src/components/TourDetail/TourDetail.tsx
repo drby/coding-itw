@@ -1,4 +1,5 @@
-import type { FC } from 'react';
+import { useState, type FC } from 'react';
+import { useParams } from 'react-router-dom';
 
 import {
   Box,
@@ -14,14 +15,35 @@ import {
 import { useTour } from "../../hooks/useTours";
 import { getAverageFillRateColor, getStatusColor } from "../../utils/colorUtils";
 import PerformanceList from "./PerformanceList";
+import AddPerformanceModal from "./AddPerformanceModal";
+import type { Performance } from "../../types/tour.types";
 
 interface TourDetailProps {
-  tourId: string;
   onBack: () => void;
 }
 
-const TourDetail: FC<TourDetailProps> = ({ tourId, onBack }) => {
-  const { tour, loading, error } = useTour(tourId);
+const TourDetail: FC<TourDetailProps> = ({ onBack }) => {
+  const { tourId } = useParams<{ tourId: string }>();
+  const { tour, loading, error } = useTour(tourId || '');
+  const [modalOpen, setModalOpen] = useState(false);
+  
+  // State to store locally added performances
+  const [localPerformances, setLocalPerformances] = useState<Performance[]>([]);
+  
+  const handleOpenModal = () => setModalOpen(true);
+  const handleCloseModal = () => setModalOpen(false);
+
+  if (!tourId) {
+    return (
+      <Box p={5} borderWidth="1px" borderRadius="md" bg="red.50" maxW="container.md" mx="auto">
+        <Heading size="md" color="red.500">Erreur: ID de tournée manquant</Heading>
+        <Text mt={2}>Impossible de trouver l'identifiant de la tournée dans l'URL.</Text>
+        <Button mt={4} colorPalette="blue" onClick={onBack}>
+          Retour à la Liste des Tournées
+        </Button>
+      </Box>
+    );
+  }
 
   if (loading) {
     return (
@@ -32,6 +54,21 @@ const TourDetail: FC<TourDetailProps> = ({ tourId, onBack }) => {
     );
   }
 
+  // Handle adding a new performance
+  const handleAddPerformance = (newPerformance: Omit<Performance, 'id'>) => {
+    const performance: Performance = {
+      ...newPerformance,
+      id: `local-${Date.now()}`, // Generate a local ID
+    };
+    
+    setLocalPerformances(prev => [...prev, performance]);
+  };
+  
+  // Combine API performances with locally added ones
+  const allPerformances = tour ? 
+    [...(tour.performances || []), ...localPerformances] : 
+    [...localPerformances];
+  
   if (error || !tour) {
     return (
       <Box p={5} borderWidth="1px" borderRadius="md" bg="red.50" maxW="container.md" mx="auto">
@@ -73,11 +110,30 @@ const TourDetail: FC<TourDetailProps> = ({ tourId, onBack }) => {
 
           <Box p={3} borderWidth="1px" borderRadius="md">
             <Text fontSize="sm" color="gray.500">Taux de Remplissage Moyen</Text>
-            <Box fontSize="2xl" fontWeight="bold">
-              <Badge colorPalette={getAverageFillRateColor(tour.averageFillRate)} px={2} py={1}>
+            <Flex align="center" gap={2} mt={1} mb={2}>
+              <Box
+                flex="1"
+                h="12px"
+                bg="gray.200"
+                borderRadius="md"
+                overflow="hidden"
+              >
+                <Box
+                  h="100%"
+                  w={`${tour.averageFillRate}%`}
+                  bg={`${getAverageFillRateColor(tour.averageFillRate)}.500`}
+                  transition="width 0.3s ease-in-out"
+                />
+              </Box>
+              <Badge
+                colorPalette={getAverageFillRateColor(tour.averageFillRate)}
+                px={2}
+                py={1}
+                fontSize="lg"
+              >
                 {tour.averageFillRate}%
               </Badge>
-            </Box>
+            </Flex>
             <Text fontSize="sm">Pour toutes les représentations</Text>
           </Box>
 
@@ -119,7 +175,24 @@ const TourDetail: FC<TourDetailProps> = ({ tourId, onBack }) => {
           <Text>{tour.notes}</Text>
         </Box>
 
-        <PerformanceList performances={tour?.performances || []} />
+        <Box mt={8} display="flex" justifyContent="space-between" alignItems="center">
+          <Heading size="md">Liste des Représentations</Heading>
+          <Button 
+            colorPalette="teal"
+            onClick={handleOpenModal}
+          >
+            + Ajouter une représentation
+          </Button>
+        </Box>
+        
+        <PerformanceList performances={allPerformances} />
+        
+        <AddPerformanceModal 
+          open={modalOpen} 
+          onClose={handleCloseModal} 
+          onAddPerformance={handleAddPerformance} 
+          tourId={tourId}
+        />
       </Box>
     </Box>
   );
