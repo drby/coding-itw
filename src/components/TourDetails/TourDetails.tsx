@@ -1,5 +1,6 @@
 import { useState, type FC } from 'react';
 import { useParams } from 'react-router-dom';
+import { IoArrowBack, IoAdd } from 'react-icons/io5';
 
 import {
   Box, Button, Heading, Text, Spinner,
@@ -26,7 +27,18 @@ const TourDetails: FC<TourDetailsProps> = ({ onBack }) => {
     return (
       <Box p={5} borderWidth="1px" borderRadius="md" bg="red.50" maxW="container.md" mx="auto">
         <Heading size="md" color="red.500">Erreur: ID de tournée manquant</Heading>
-        <Button mt={4} colorPalette="blue" onClick={onBack}>Retour à la Liste des Tournées</Button>
+        <Button
+          mt={4}
+          variant="ghost"
+          onClick={onBack}
+          _hover={{ bg: "gray.100" }}
+          display="flex"
+          alignItems="center"
+          gap={2}
+        >
+          <IoArrowBack />
+          Retour à la Liste des Tournées
+        </Button>
       </Box>
     );
   }
@@ -46,7 +58,18 @@ const TourDetails: FC<TourDetailsProps> = ({ onBack }) => {
         <Heading size="md" color="red.500">Erreur de Chargement de la Tournée</Heading>
         <Text mt={2}>Nous n'avons pas pu charger les détails de la tournée. Veuillez réessayer plus tard.</Text>
         {error && <Text mt={2} fontStyle="italic">Détails de l'erreur: {String(error)}</Text>}
-        <Button mt={4} colorPalette="blue" onClick={onBack}>Retour à la Liste des Tournées</Button>
+        <Button
+          mt={4}
+          variant="ghost"
+          onClick={onBack}
+          _hover={{ bg: "gray.100" }}
+          display="flex"
+          alignItems="center"
+          gap={2}
+        >
+          <IoArrowBack />
+          Retour à la Liste des Tournées
+        </Button>
       </Box>
     );
   }
@@ -62,7 +85,18 @@ const TourDetails: FC<TourDetailsProps> = ({ onBack }) => {
 
   return (
     <Box>
-      <Button mb={4} colorPalette="blue" onClick={onBack}>Retour à la Liste des Tournées</Button>
+      <Button
+        mb={4}
+        variant="ghost"
+        onClick={onBack}
+        _hover={{ bg: "gray.100" }}
+        display="flex"
+        alignItems="center"
+        gap={2}
+      >
+        <IoArrowBack />
+        Retour à la Liste des Tournées
+      </Button>
 
       <Box p={6} shadow="md" borderWidth="1px" borderRadius="md">
         <Flex justifyContent="space-between" alignItems="center">
@@ -130,8 +164,15 @@ const TourDetails: FC<TourDetailsProps> = ({ onBack }) => {
 
         <Box mt={8} display="flex" justifyContent="space-between" alignItems="center">
           <Heading size="md">Liste des Représentations</Heading>
-          <Button colorPalette="teal" onClick={() => setModalOpen(true)}>
-            + Ajouter une représentation
+          <Button 
+            colorPalette="teal" 
+            onClick={() => setModalOpen(true)}
+            display="flex"
+            alignItems="center"
+            gap={2}
+          >
+            <IoAdd />
+            Ajouter une représentation
           </Button>
         </Box>
 

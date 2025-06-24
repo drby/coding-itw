@@ -5,7 +5,7 @@ import { Box, Heading, Text, Spinner, Flex } from "@chakra-ui/react";
 import { useTours, useFilteredTours } from "@/hooks";
 import { type StatusFilterType } from "@/types";
 
-import { SearchBar, StatusFilter, TourCards, TourStats } from '@/components/Dashboard';
+import { SearchBar, StatusFilter, TourList, TourStats } from '@/components/Dashboard';
 
 interface DashboardProps {
   onSelectTour?: (tourId: string | number) => void;
@@ -62,7 +62,7 @@ const Dashboard: FC<DashboardProps> = ({ onSelectTour }) => {
         />
       </Flex>
 
-      <TourCards tours={filteredTours} onSelectTour={onSelectTour} />
+      <TourList tours={filteredTours} onSelectTour={onSelectTour} />
     </Box>
   );
 };

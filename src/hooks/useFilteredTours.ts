@@ -20,7 +20,7 @@ export const useFilteredTours = (
       };
 
       const matchingStatuses = statusMap[statusFilter as keyof typeof statusMap] || [];
-      filtered = filtered.filter(tour => 
+      filtered = filtered.filter(tour =>
         matchingStatuses.includes(tour.status.trim().toLowerCase())
       );
     }

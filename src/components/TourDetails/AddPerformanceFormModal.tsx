@@ -1,4 +1,5 @@
-import { useState, type FC } from 'react';
+import { type ChangeEvent,useState, type FC } from 'react';
+
 import {
   Button,
   Input,
@@ -7,6 +8,7 @@ import {
   Heading,
   Flex,
 } from '@chakra-ui/react';
+import { toaster } from '@/components/ui/toast-utils';
 import type { Performance } from '@/types';
 
 interface AddPerformanceFormModalProps {
@@ -30,7 +32,7 @@ const AddPerformanceFormModal: FC<AddPerformanceFormModalProps> = ({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -89,7 +91,13 @@ const AddPerformanceFormModal: FC<AddPerformanceFormModalProps> = ({
 
       onAddPerformance(newPerformance);
 
-      alert(`Représentation ajoutée: ${formData.city} le ${new Date(formData.date).toLocaleDateString('fr-FR')}`);
+      toaster.create({
+        title: 'Représentation ajoutée',
+        description: `${formData.city} le ${new Date(formData.date).toLocaleDateString('fr-FR')}`,
+        status: 'success',
+        duration: 5000,
+        closable: true
+      });
 
       setFormData({
         date: '',

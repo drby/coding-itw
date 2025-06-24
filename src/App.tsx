@@ -1,9 +1,11 @@
 import { type FC } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
+
 import { Container, Heading } from '@chakra-ui/react';
 
 import Dashboard from '@/components/Dashboard';
 import TourDetail from '@/components/TourDetails';
+import { Toaster } from '@/components/ui/toaster';
 
 const App: FC = () => {
   const navigate = useNavigate();
@@ -24,6 +26,8 @@ const App: FC = () => {
         <Route path="/" element={<Dashboard onSelectTour={handleSelectTour} />} />
         <Route path="/tour/:tourId" element={<TourDetail onBack={handleBackToDashboard} />} />
       </Routes>
+
+      <Toaster position="top" />
     </Container>
   )
 }
