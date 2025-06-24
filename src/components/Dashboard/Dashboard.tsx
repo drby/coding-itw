@@ -1,13 +1,11 @@
-import { useState, useMemo, type FC, type ChangeEvent } from 'react';
+import { useState, type FC, type ChangeEvent } from 'react';
 
 import { Box, Heading, Text, Spinner, Flex } from "@chakra-ui/react";
 
-import { useTours } from "../../hooks/useTours";
-import { type StatusFilterType } from "../../types/dashboard.types";
+import { useTours, useFilteredTours } from "@/hooks";
+import { type StatusFilterType } from "@/types";
 
-import SearchBar from "./SearchBar";
-import StatusFilter from "./StatusFilter";
-import TourCards from "./TourCards";
+import { SearchBar, StatusFilter, TourCards } from '@/components/Dashboard';
 
 interface DashboardProps {
   onSelectTour?: (tourId: string | number) => void;
@@ -26,39 +24,7 @@ const Dashboard: FC<DashboardProps> = ({ onSelectTour }) => {
     setStatusFilter(status);
   };
 
-  const filteredTours = useMemo(() => {
-    let filtered = [...tours];
-
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(tour => {
-        const normalizedStatus = tour.status.trim().toLowerCase();
-
-        switch (statusFilter) {
-          case 'planifiée':
-            return ['planifiée', 'planifiee', 'planned'].includes(normalizedStatus);
-          case 'en cours':
-            return ['en cours', 'ongoing', 'in progress'].includes(normalizedStatus);
-          case 'terminée':
-            return ['terminée', 'terminee', 'completed'].includes(normalizedStatus);
-          case 'annulée':
-            return ['annulée', 'annulee', 'cancelled', 'canceled'].includes(normalizedStatus);
-          default:
-            return true;
-        }
-      });
-    }
-
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(tour =>
-        tour.name.toLowerCase().includes(query) ||
-        tour.show.title.toLowerCase().includes(query) ||
-        tour.status.toLowerCase().includes(query)
-      );
-    }
-
-    return filtered;
-  }, [tours, searchQuery, statusFilter]);
+  const filteredTours = useFilteredTours(tours, searchQuery, statusFilter);
 
   if (loading) {
     return (

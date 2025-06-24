@@ -1,7 +1,7 @@
 import { type FC } from 'react';
 import { SimpleGrid, Box, Heading, Text, Badge, Button, Flex } from "@chakra-ui/react";
-import { getStatusColor, getAverageFillRateColor } from "../../utils/colorUtils";
-import type { Tour } from "../../types/tour.types";
+import { getStatusColor, getAverageFillRateColor } from "@/utils";
+import type { Tour } from "@/types";
 
 interface TourCardsProps {
   tours: Tour[];
@@ -46,16 +46,16 @@ const TourCards: FC<TourCardsProps> = ({ tours, onSelectTour }) => {
           </Text>
           <Text mb={1}>Taux de Remplissage Moyen:</Text>
           <Flex align="center" gap={2} mb={2}>
-            <Box 
-              flex="1" 
-              h="8px" 
-              bg="gray.200" 
-              borderRadius="md" 
+            <Box
+              flex="1"
+              h="8px"
+              bg="gray.200"
+              borderRadius="md"
               overflow="hidden"
             >
-              <Box 
-                h="100%" 
-                w={`${tour.averageFillRate}%`} 
+              <Box
+                h="100%"
+                w={`${tour.averageFillRate}%`}
                 bg={`${getAverageFillRateColor(tour.averageFillRate)}.500`}
                 transition="width 0.3s ease-in-out"
               />
@@ -65,10 +65,10 @@ const TourCards: FC<TourCardsProps> = ({ tours, onSelectTour }) => {
             </Badge>
           </Flex>
 
-          <Button 
-            mt={4} 
-            size="sm" 
-            colorPalette="teal" 
+          <Button
+            mt={4}
+            size="sm"
+            colorPalette="teal"
             width="100%"
             onClick={(e) => {
               e.stopPropagation();

@@ -9,8 +9,8 @@ import {
   SimpleGrid,
 } from "@chakra-ui/react";
 
-import type { Performance } from '../../types/tour.types';
-import { getAverageFillRateColor } from "../../utils/colorUtils";
+import type { Performance } from '@/types';
+import { getAverageFillRateColor } from "@/utils";
 
 interface PerformanceListProps {
   performances: Performance[];

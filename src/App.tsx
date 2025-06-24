@@ -1,10 +1,9 @@
 import { type FC } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-
 import { Container, Heading } from '@chakra-ui/react';
 
-import Dashboard from './components/Dashboard/Dashboard';
-import TourDetail from './components/TourDetail/TourDetail';
+import Dashboard from '@/components/Dashboard';
+import TourDetail from '@/components/TourDetails';
 
 const App: FC = () => {
   const navigate = useNavigate();

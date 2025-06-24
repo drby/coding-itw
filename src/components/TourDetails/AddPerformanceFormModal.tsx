@@ -7,16 +7,16 @@ import {
   Heading,
   Flex,
 } from '@chakra-ui/react';
-import type { Performance } from '../../types/tour.types';
+import type { Performance } from '@/types';
 
-interface AddPerformanceModalProps {
+interface AddPerformanceFormModalProps {
   open: boolean;
   onClose: () => void;
   onAddPerformance: (performance: Omit<Performance, 'id'>) => void;
   tourId: string | number;
 }
 
-const AddPerformanceModal: FC<AddPerformanceModalProps> = ({
+const AddPerformanceFormModal: FC<AddPerformanceFormModalProps> = ({
   open,
   onClose,
   onAddPerformance,
@@ -209,4 +209,4 @@ const AddPerformanceModal: FC<AddPerformanceModalProps> = ({
   );
 };
 
-export default AddPerformanceModal;
+export default AddPerformanceFormModal;

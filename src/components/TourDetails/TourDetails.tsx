@@ -1,46 +1,31 @@
 import { useState, type FC } from 'react';
 import { useParams } from 'react-router-dom';
-
 import {
-  Box,
-  Button,
-  Heading,
-  Text,
-  Spinner,
-  Badge,
-  Flex,
-  Grid,
+  Box, Button, Heading, Text, Spinner,
+  Badge, Flex, Grid
 } from "@chakra-ui/react";
 
-import { useTour } from "../../hooks/useTours";
-import { getAverageFillRateColor, getStatusColor } from "../../utils/colorUtils";
-import PerformanceList from "./PerformanceList";
-import AddPerformanceModal from "./AddPerformanceModal";
-import type { Performance } from "../../types/tour.types";
+import { useTour } from "@/hooks";
+import { getAverageFillRateColor, getStatusColor } from "@/utils";
+import { PerformanceList, AddPerformanceFormModal } from "@/components/TourDetails";
+import type { Performance } from "@/types";
 
-interface TourDetailProps {
+interface TourDetailsProps {
   onBack: () => void;
 }
 
-const TourDetail: FC<TourDetailProps> = ({ onBack }) => {
+const TourDetails: FC<TourDetailsProps> = ({ onBack }) => {
   const { tourId } = useParams<{ tourId: string }>();
   const { tour, loading, error } = useTour(tourId || '');
   const [modalOpen, setModalOpen] = useState(false);
-  
-  // State to store locally added performances
   const [localPerformances, setLocalPerformances] = useState<Performance[]>([]);
-  
-  const handleOpenModal = () => setModalOpen(true);
-  const handleCloseModal = () => setModalOpen(false);
 
   if (!tourId) {
     return (
       <Box p={5} borderWidth="1px" borderRadius="md" bg="red.50" maxW="container.md" mx="auto">
         <Heading size="md" color="red.500">Erreur: ID de tournée manquant</Heading>
         <Text mt={2}>Impossible de trouver l'identifiant de la tournée dans l'URL.</Text>
-        <Button mt={4} colorPalette="blue" onClick={onBack}>
-          Retour à la Liste des Tournées
-        </Button>
+        <Button mt={4} colorPalette="blue" onClick={onBack}>Retour à la Liste des Tournées</Button>
       </Box>
     );
   }
@@ -54,39 +39,29 @@ const TourDetail: FC<TourDetailProps> = ({ onBack }) => {
     );
   }
 
-  // Handle adding a new performance
-  const handleAddPerformance = (newPerformance: Omit<Performance, 'id'>) => {
-    const performance: Performance = {
-      ...newPerformance,
-      id: `local-${Date.now()}`, // Generate a local ID
-    };
-    
-    setLocalPerformances(prev => [...prev, performance]);
-  };
-  
-  // Combine API performances with locally added ones
-  const allPerformances = tour ? 
-    [...(tour.performances || []), ...localPerformances] : 
-    [...localPerformances];
-  
   if (error || !tour) {
     return (
       <Box p={5} borderWidth="1px" borderRadius="md" bg="red.50" maxW="container.md" mx="auto">
         <Heading size="md" color="red.500">Erreur de Chargement de la Tournée</Heading>
         <Text mt={2}>Nous n'avons pas pu charger les détails de la tournée. Veuillez réessayer plus tard.</Text>
         <Text mt={2} fontStyle="italic">Détails de l'erreur: {String(error)}</Text>
-        <Button mt={4} colorPalette="blue" onClick={onBack}>
-          Retour à la Liste des Tournées
-        </Button>
+        <Button mt={4} colorPalette="blue" onClick={onBack}>Retour à la Liste des Tournées</Button>
       </Box>
     );
   }
 
+  const handleAddPerformance = (newPerformance: Omit<Performance, 'id'>) => {
+    setLocalPerformances(prev => [
+      ...prev, 
+      { ...newPerformance, id: `local-${Date.now()}` }
+    ]);
+  };
+
+  const allPerformances = [...(tour.performances || []), ...localPerformances];
+
   return (
     <Box>
-      <Button mb={4} colorPalette="blue" onClick={onBack}>
-        Retour à la Liste des Tournées
-      </Button>
+      <Button mb={4} colorPalette="blue" onClick={onBack}>Retour à la Liste des Tournées</Button>
 
       <Box p={6} shadow="md" borderWidth="1px" borderRadius="md">
         <Flex justifyContent="space-between" alignItems="center">
@@ -111,13 +86,7 @@ const TourDetail: FC<TourDetailProps> = ({ onBack }) => {
           <Box p={3} borderWidth="1px" borderRadius="md">
             <Text fontSize="sm" color="gray.500">Taux de Remplissage Moyen</Text>
             <Flex align="center" gap={2} mt={1} mb={2}>
-              <Box
-                flex="1"
-                h="12px"
-                bg="gray.200"
-                borderRadius="md"
-                overflow="hidden"
-              >
+              <Box flex="1" h="12px" bg="gray.200" borderRadius="md" overflow="hidden">
                 <Box
                   h="100%"
                   w={`${tour.averageFillRate}%`}
@@ -127,9 +96,7 @@ const TourDetail: FC<TourDetailProps> = ({ onBack }) => {
               </Box>
               <Badge
                 colorPalette={getAverageFillRateColor(tour.averageFillRate)}
-                px={2}
-                py={1}
-                fontSize="lg"
+                px={2} py={1} fontSize="lg"
               >
                 {tour.averageFillRate}%
               </Badge>
@@ -146,23 +113,19 @@ const TourDetail: FC<TourDetailProps> = ({ onBack }) => {
 
         <Box mt={6}>
           <Heading size="md" mb={3}>Informations de la Tournée</Heading>
-
           <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={4}>
             <Box>
               <Text fontWeight="bold">Durée:</Text>
               <Text>{tour.startDate} au {tour.endDate}</Text>
             </Box>
-
             <Box>
               <Text fontWeight="bold">Détails du Spectacle:</Text>
               <Text>{tour.show.genre} • {tour.show.duration} min • {tour.show.language}</Text>
             </Box>
-
             <Box>
               <Text fontWeight="bold">Metteur en scène:</Text>
               <Text>{tour.team.director}</Text>
             </Box>
-
             <Box>
               <Text fontWeight="bold">Équipe de Production:</Text>
               <Text>Plateau: {tour.team.stageManager} • Technique: {tour.team.technicalDirector} • Costumes: {tour.team.costumeDesigner}</Text>
@@ -177,20 +140,17 @@ const TourDetail: FC<TourDetailProps> = ({ onBack }) => {
 
         <Box mt={8} display="flex" justifyContent="space-between" alignItems="center">
           <Heading size="md">Liste des Représentations</Heading>
-          <Button 
-            colorPalette="teal"
-            onClick={handleOpenModal}
-          >
+          <Button colorPalette="teal" onClick={() => setModalOpen(true)}>
             + Ajouter une représentation
           </Button>
         </Box>
-        
+
         <PerformanceList performances={allPerformances} />
-        
-        <AddPerformanceModal 
-          open={modalOpen} 
-          onClose={handleCloseModal} 
-          onAddPerformance={handleAddPerformance} 
+
+        <AddPerformanceFormModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onAddPerformance={handleAddPerformance}
           tourId={tourId}
         />
       </Box>
@@ -198,4 +158,4 @@ const TourDetail: FC<TourDetailProps> = ({ onBack }) => {
   );
 };
 
-export default TourDetail;
+export default TourDetails;

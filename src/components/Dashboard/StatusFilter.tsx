@@ -1,7 +1,7 @@
 import { type FC } from 'react';
 import { ButtonGroup, Button } from "@chakra-ui/react";
 
-import { type StatusFilterType } from "../../types/dashboard.types";
+import { type StatusFilterType } from "@/types";
 
 interface StatusFilterProps {
   currentFilter: StatusFilterType;

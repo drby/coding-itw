@@ -1,28 +1,25 @@
 import { useState, useEffect } from 'react';
-import apiService from '../services/api';
-import type { Tour } from '../types/tour.types';
+import apiService from '@/services';
+import type { Tour } from '@/types';
 
 export const useTours = () => {
   const [tours, setTours] = useState<Tour[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchTours = async () => {
+    async function loadTours() {
       try {
         setLoading(true);
-        const data = await apiService.getAllTours();
-        setTours(data);
-        setError(null);
-      } catch (err) {
+        setTours(await apiService.getAllTours());
+      } catch {
         setError('Failed to fetch tours');
-        console.error(err);
       } finally {
         setLoading(false);
       }
-    };
+    }
 
-    fetchTours();
+    loadTours();
   }, []);
 
   return { tours, loading, error };
@@ -30,39 +27,33 @@ export const useTours = () => {
 
 export const useTour = (id: string) => {
   const [tour, setTour] = useState<Tour | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchTourWithPerformances = async () => {
+    if (!id) return;
+
+    async function loadTour() {
       try {
         setLoading(true);
+
         const tourData = await apiService.getTourById(id);
 
         try {
-          // Fetch performances for this tour
-          const performances = await apiService.getTourPerformances(id);
-          // Add performances to the tour data
-          tourData.performances = performances;
-        } catch (perfErr) {
-          console.error(`Error fetching performances for tour ${id}:`, perfErr);
-          // Don't fail the whole request if performances fail
-          // Just log the error and continue with the tour data
+          tourData.performances = await apiService.getTourPerformances(id);
+        } catch {
+          tourData.performances = [];
         }
 
         setTour(tourData);
-        setError(null);
-      } catch (err) {
-        setError(`Failed to fetch tour with ID: ${id}`);
-        console.error(err);
+      } catch {
+        setError(`Failed to fetch tour ${id}`);
       } finally {
         setLoading(false);
       }
-    };
-
-    if (id) {
-      fetchTourWithPerformances();
     }
+
+    loadTour();
   }, [id]);
 
   return { tour, loading, error };
