@@ -4,13 +4,12 @@ import {
   Box,
   Heading,
   Text,
-  Badge,
   Grid,
   SimpleGrid,
 } from "@chakra-ui/react";
 
 import type { Performance } from '@/types';
-import { getAverageFillRateColor } from "@/utils";
+import { FillRateDisplay } from "@/components/common";
 
 interface PerformanceListProps {
   performances: Performance[];
@@ -48,7 +47,9 @@ const PerformanceList: FC<PerformanceListProps> = ({ performances }) => {
             >
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
                 <Heading size="sm">{new Date(performance.date).toLocaleDateString('fr-FR')}</Heading>
-                <Badge colorPalette={getAverageFillRateColor(fillRate)}>{fillRate}%</Badge>
+              </Box>
+              <Box mb={3}>
+                <FillRateDisplay fillRate={fillRate} height="8px" />
               </Box>
 
               <Text fontWeight="bold" mb={1}>{performance.city}</Text>

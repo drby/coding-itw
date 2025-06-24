@@ -42,13 +42,14 @@ const cache = {
 
   clear(prefix?: string): void {
     if (prefix) {
-      // Clear items with specific prefix
+      const keysToRemove = [];
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key?.startsWith(prefix)) {
-          localStorage.removeItem(key);
+          keysToRemove.push(key);
         }
       }
+      keysToRemove.forEach(key => localStorage.removeItem(key));
     } else {
       localStorage.removeItem('tours');
       this.clear('tour_');
@@ -59,13 +60,12 @@ const cache = {
 
 const handleApiError = (err: unknown): never => {
   if (axios.isAxiosError(err)) {
-    if (err.response) {
-      throw `API error: ${err.response.status} - ${err.response.statusText}`;
-    } else if (err.request) {
-      throw 'No response from server. Is the API server running?';
-    } else {
-      throw `Request error: ${err.message}`;
-    }
+    const message = err.response
+      ? `API error: ${err.response.status} - ${err.response.statusText}`
+      : err.request
+      ? 'No response from server. Is the API server running?'
+      : `Request error: ${err.message}`;
+    throw message;
   }
   throw String(err);
 };

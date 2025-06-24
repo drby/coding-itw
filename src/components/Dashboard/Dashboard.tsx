@@ -5,7 +5,7 @@ import { Box, Heading, Text, Spinner, Flex } from "@chakra-ui/react";
 import { useTours, useFilteredTours } from "@/hooks";
 import { type StatusFilterType } from "@/types";
 
-import { SearchBar, StatusFilter, TourCards } from '@/components/Dashboard';
+import { SearchBar, StatusFilter, TourCards, TourStats } from '@/components/Dashboard';
 
 interface DashboardProps {
   onSelectTour?: (tourId: string | number) => void;
@@ -47,7 +47,9 @@ const Dashboard: FC<DashboardProps> = ({ onSelectTour }) => {
 
   return (
     <Box p={5}>
-      <Heading mb={4}>Tournées Théâtrales</Heading>
+      <Heading as="h1" mb={4}>Tournées Théâtrales</Heading>
+
+      <TourStats tours={tours} isLoading={loading} />
 
       <Flex direction={{ base: 'column', md: 'row' }} gap={4} mb={6}>
         <SearchBar

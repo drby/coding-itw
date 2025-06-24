@@ -1,12 +1,14 @@
 import { useState, type FC } from 'react';
 import { useParams } from 'react-router-dom';
+
 import {
   Box, Button, Heading, Text, Spinner,
-  Badge, Flex, Grid
+  Badge, Grid, Flex
 } from "@chakra-ui/react";
 
 import { useTour } from "@/hooks";
-import { getAverageFillRateColor, getStatusColor } from "@/utils";
+import { getStatusColor } from "@/utils";
+import { FillRateDisplay } from "@/components/common";
 import { PerformanceList, AddPerformanceFormModal } from "@/components/TourDetails";
 import type { Performance } from "@/types";
 
@@ -24,7 +26,6 @@ const TourDetails: FC<TourDetailsProps> = ({ onBack }) => {
     return (
       <Box p={5} borderWidth="1px" borderRadius="md" bg="red.50" maxW="container.md" mx="auto">
         <Heading size="md" color="red.500">Erreur: ID de tournée manquant</Heading>
-        <Text mt={2}>Impossible de trouver l'identifiant de la tournée dans l'URL.</Text>
         <Button mt={4} colorPalette="blue" onClick={onBack}>Retour à la Liste des Tournées</Button>
       </Box>
     );
@@ -39,12 +40,12 @@ const TourDetails: FC<TourDetailsProps> = ({ onBack }) => {
     );
   }
 
-  if (error || !tour) {
+  if (!tour) {
     return (
       <Box p={5} borderWidth="1px" borderRadius="md" bg="red.50" maxW="container.md" mx="auto">
         <Heading size="md" color="red.500">Erreur de Chargement de la Tournée</Heading>
         <Text mt={2}>Nous n'avons pas pu charger les détails de la tournée. Veuillez réessayer plus tard.</Text>
-        <Text mt={2} fontStyle="italic">Détails de l'erreur: {String(error)}</Text>
+        {error && <Text mt={2} fontStyle="italic">Détails de l'erreur: {String(error)}</Text>}
         <Button mt={4} colorPalette="blue" onClick={onBack}>Retour à la Liste des Tournées</Button>
       </Box>
     );
@@ -52,7 +53,7 @@ const TourDetails: FC<TourDetailsProps> = ({ onBack }) => {
 
   const handleAddPerformance = (newPerformance: Omit<Performance, 'id'>) => {
     setLocalPerformances(prev => [
-      ...prev, 
+      ...prev,
       { ...newPerformance, id: `local-${Date.now()}` }
     ]);
   };
@@ -85,22 +86,11 @@ const TourDetails: FC<TourDetailsProps> = ({ onBack }) => {
 
           <Box p={3} borderWidth="1px" borderRadius="md">
             <Text fontSize="sm" color="gray.500">Taux de Remplissage Moyen</Text>
-            <Flex align="center" gap={2} mt={1} mb={2}>
-              <Box flex="1" h="12px" bg="gray.200" borderRadius="md" overflow="hidden">
-                <Box
-                  h="100%"
-                  w={`${tour.averageFillRate}%`}
-                  bg={`${getAverageFillRateColor(tour.averageFillRate)}.500`}
-                  transition="width 0.3s ease-in-out"
-                />
-              </Box>
-              <Badge
-                colorPalette={getAverageFillRateColor(tour.averageFillRate)}
-                px={2} py={1} fontSize="lg"
-              >
-                {tour.averageFillRate}%
-              </Badge>
-            </Flex>
+            <FillRateDisplay
+              fillRate={tour.averageFillRate}
+              height="12px"
+              mb={2}
+            />
             <Text fontSize="sm">Pour toutes les représentations</Text>
           </Box>
 
