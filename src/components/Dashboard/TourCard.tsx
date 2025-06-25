@@ -18,6 +18,7 @@ const TourCard: FC<TourCardProps> = ({ tour, onSelectTour }) => {
       shadow="md"
       borderWidth="1px"
       borderRadius="md"
+      bg="var(--bg-surface)"
       data-tour-id={tour.id}
       _hover={{ shadow: "lg", borderColor: "teal.500" }}
       transition="all 0.2s"

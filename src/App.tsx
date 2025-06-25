@@ -1,11 +1,13 @@
 import { type FC } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 
-import { Container, Heading } from '@chakra-ui/react';
+import { Container, Heading, Flex, Box } from '@chakra-ui/react';
 
-import Dashboard from '@/components/Dashboard';
-import TourDetail from '@/components/TourDetails';
-import { Toaster } from '@/components/ui/toaster';
+import Dashboard from '@/pages/Dashboard/Dashboard';
+import TourDetail from '@/pages/TourDetails/TourDetails';
+
+import { Toaster } from '@/components/ui/Toaster';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 const App: FC = () => {
   const navigate = useNavigate();
@@ -20,7 +22,12 @@ const App: FC = () => {
 
   return (
     <Container maxW="container.xl" py={8}>
-      <Heading as="h1" mb={6} textAlign="center">Gestion des Tournées Théâtrales</Heading>
+      <Flex align="center" mb={6}>
+        <Box flex="1">
+          <Heading as="h1" textAlign={"center"}>Gestion des Tournées Théâtrales</Heading>
+        </Box>
+        <ThemeToggle />
+      </Flex>
 
       <Routes>
         <Route path="/" element={<Dashboard onSelectTour={handleSelectTour} />} />

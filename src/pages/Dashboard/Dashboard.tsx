@@ -5,13 +5,15 @@ import { Box, Heading, Text, Spinner, Flex } from "@chakra-ui/react";
 import { useTours, useFilteredTours } from "@/hooks";
 import { type StatusFilterType } from "@/types";
 
+// Import individual components from the components folder
 import { SearchBar, StatusFilter, TourList, TourStats } from '@/components/Dashboard';
 
 interface DashboardProps {
-  onSelectTour?: (tourId: string | number) => void;
+  onSelectTour: (tourId: string | number) => void;
 }
 
 const Dashboard: FC<DashboardProps> = ({ onSelectTour }) => {
+  // Data fetching and state management happens at the page level
   const { tours, loading, error } = useTours();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<StatusFilterType>('all');

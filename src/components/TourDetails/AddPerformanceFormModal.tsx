@@ -1,4 +1,4 @@
-import { type ChangeEvent,useState, type FC } from 'react';
+import { type FC } from 'react';
 
 import {
   Button,
@@ -8,8 +8,10 @@ import {
   Heading,
   Flex,
 } from '@chakra-ui/react';
-import { toaster } from '@/components/ui/toast-utils';
+import { toaster } from '@/components/ui/utils/toast-utils';
 import type { Performance } from '@/types';
+import { useForm } from '@/hooks/useForm';
+import { validatePerformanceForm, type PerformanceForm } from '@/components/TourDetails/forms/performanceForm';
 
 interface AddPerformanceFormModalProps {
   open: boolean;
@@ -23,69 +25,31 @@ const AddPerformanceFormModal: FC<AddPerformanceFormModalProps> = ({
   onClose,
   onAddPerformance,
 }) => {
-  const [formData, setFormData] = useState({
+  const initialFormData: PerformanceForm = {
     date: '',
     city: '',
     venue: '',
     capacity: '',
     ticketPrice: '',
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: '',
-      });
-    }
   };
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.date) {
-      newErrors.date = 'La date est requise';
-    }
-
-    if (!formData.city) {
-      newErrors.city = 'La ville est requise';
-    }
-
-    if (!formData.venue) {
-      newErrors.venue = 'Le lieu est requis';
-    }
-
-    if (!formData.capacity) {
-      newErrors.capacity = 'La capacité est requise';
-    } else if (isNaN(Number(formData.capacity)) || Number(formData.capacity) <= 0) {
-      newErrors.capacity = 'La capacité doit être un nombre positif';
-    }
-
-    if (!formData.ticketPrice) {
-      newErrors.ticketPrice = 'Le prix du billet est requis';
-    } else if (isNaN(Number(formData.ticketPrice)) || Number(formData.ticketPrice) < 0) {
-      newErrors.ticketPrice = 'Le prix du billet doit être un nombre positif';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const {
+    values,
+    getError,
+    handleChange,
+    handleBlur,
+    validateAll,
+    resetForm
+  } = useForm(initialFormData, validatePerformanceForm);
 
   const handleSubmit = () => {
-    if (validateForm()) {
+    if (validateAll()) {
       const newPerformance: Omit<Performance, 'id'> = {
-        date: formData.date,
-        city: formData.city,
-        venue: formData.venue,
-        capacity: Number(formData.capacity),
-        ticketPrice: Number(formData.ticketPrice),
+        date: values.date,
+        city: values.city,
+        venue: values.venue,
+        capacity: Number(values.capacity),
+        ticketPrice: Number(values.ticketPrice),
         ticketsSold: 0,
       };
 
@@ -93,19 +57,13 @@ const AddPerformanceFormModal: FC<AddPerformanceFormModalProps> = ({
 
       toaster.create({
         title: 'Représentation ajoutée',
-        description: `${formData.city} le ${new Date(formData.date).toLocaleDateString('fr-FR')}`,
+        description: `${values.city} le ${new Date(values.date).toLocaleDateString('fr-FR')}`,
         status: 'success',
         duration: 5000,
         closable: true
       });
 
-      setFormData({
-        date: '',
-        city: '',
-        venue: '',
-        capacity: '',
-        ticketPrice: '',
-      });
+      resetForm();
       onClose();
     }
   };
@@ -119,7 +77,7 @@ const AddPerformanceFormModal: FC<AddPerformanceFormModalProps> = ({
       left="0"
       right="0"
       bottom="0"
-      bg="rgba(0,0,0,0.5)"
+      bg="rgba(0,0,0,0.7)"
       zIndex="1000"
       display="flex"
       alignItems="center"
@@ -127,11 +85,13 @@ const AddPerformanceFormModal: FC<AddPerformanceFormModalProps> = ({
     >
       <Box
         bg="white"
+        color="gray.800"
         borderRadius="md"
         maxW="500px"
         w="90%"
         p={5}
         position="relative"
+        boxShadow="xl"
       >
         <Button
           position="absolute"
@@ -143,64 +103,84 @@ const AddPerformanceFormModal: FC<AddPerformanceFormModalProps> = ({
           ✕
         </Button>
 
-        <Heading size="md" mb={4}>Ajouter une représentation</Heading>
+        <Heading size="md" mb={4} color="gray.800">Ajouter une représentation</Heading>
 
         <Box gap="16px" display="flex" flexDirection="column">
-          <Box>
-            <Text mb={1} fontWeight="medium">Date</Text>
+          <Box mb={4}>
+            <Text mb={1} fontWeight="medium" color="gray.700">Date</Text>
             <Input
               type="date"
               name="date"
-              value={formData.date}
+              value={values.date}
               onChange={handleChange}
+              onBlur={() => handleBlur('date')}
+              borderColor={getError('date') ? 'red.500' : undefined}
             />
-            {errors.date && <Text color="red.500" fontSize="sm">{errors.date}</Text>}
+            {getError('date') && (
+              <Text color="red.500" fontSize="sm" mt={1}>{getError('date')}</Text>
+            )}
           </Box>
 
-          <Box>
-            <Text mb={1} fontWeight="medium">Ville</Text>
+          <Box mb={4}>
+            <Text mb={1} fontWeight="medium" color="gray.700">Ville</Text>
             <Input
               name="city"
-              value={formData.city}
+              value={values.city}
               onChange={handleChange}
+              onBlur={() => handleBlur('city')}
               placeholder="Paris"
+              borderColor={getError('city') ? 'red.500' : undefined}
             />
-            {errors.city && <Text color="red.500" fontSize="sm">{errors.city}</Text>}
+            {getError('city') && (
+              <Text color="red.500" fontSize="sm" mt={1}>{getError('city')}</Text>
+            )}
           </Box>
 
-          <Box>
-            <Text mb={1} fontWeight="medium">Lieu</Text>
+          <Box mb={4}>
+            <Text mb={1} fontWeight="medium" color="gray.700">Lieu</Text>
             <Input
               name="venue"
-              value={formData.venue}
+              value={values.venue}
               onChange={handleChange}
+              onBlur={() => handleBlur('venue')}
               placeholder="Théâtre de la Ville"
+              borderColor={getError('venue') ? 'red.500' : undefined}
             />
-            {errors.venue && <Text color="red.500" fontSize="sm">{errors.venue}</Text>}
+            {getError('venue') && (
+              <Text color="red.500" fontSize="sm" mt={1}>{getError('venue')}</Text>
+            )}
           </Box>
 
-          <Box>
-            <Text mb={1} fontWeight="medium">Capacité</Text>
+          <Box mb={4}>
+            <Text mb={1} fontWeight="medium" color="gray.700">Capacité</Text>
             <Input
               type="number"
               name="capacity"
-              value={formData.capacity}
+              value={values.capacity}
               onChange={handleChange}
+              onBlur={() => handleBlur('capacity')}
               placeholder="500"
+              borderColor={getError('capacity') ? 'red.500' : undefined}
             />
-            {errors.capacity && <Text color="red.500" fontSize="sm">{errors.capacity}</Text>}
+            {getError('capacity') && (
+              <Text color="red.500" fontSize="sm" mt={1}>{getError('capacity')}</Text>
+            )}
           </Box>
 
-          <Box>
-            <Text mb={1} fontWeight="medium">Prix du billet (€)</Text>
+          <Box mb={4}>
+            <Text mb={1} fontWeight="medium" color="gray.700">Prix du billet (€)</Text>
             <Input
               type="number"
               name="ticketPrice"
-              value={formData.ticketPrice}
+              value={values.ticketPrice}
               onChange={handleChange}
+              onBlur={() => handleBlur('ticketPrice')}
               placeholder="25"
+              borderColor={getError('ticketPrice') ? 'red.500' : undefined}
             />
-            {errors.ticketPrice && <Text color="red.500" fontSize="sm">{errors.ticketPrice}</Text>}
+            {getError('ticketPrice') && (
+              <Text color="red.500" fontSize="sm" mt={1}>{getError('ticketPrice')}</Text>
+            )}
           </Box>
         </Box>
 

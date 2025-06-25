@@ -5,7 +5,7 @@ import {
   Flex,
   Text,
 } from "@chakra-ui/react"
-import type { Toast } from "./toast-utils"
+import type { Toast } from "./utils/toast-utils"
 
 interface ToasterProps {
   position?: "top" | "bottom"

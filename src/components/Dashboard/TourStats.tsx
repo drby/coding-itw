@@ -14,10 +14,10 @@ const TourStats: FC<TourStatsProps> = ({ tours, isLoading }) => {
   const stats = calculateTourStats(tours);
 
   return (
-    <Box mb={6} p={4} borderWidth="1px" borderRadius="md" bg="white" shadow="sm">
+    <Box mb={6} p={4} borderWidth="1px" borderRadius="md" bg="var(--bg-surface)" shadow="sm">
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
         <Box>
-          <Text fontSize="sm" color="gray.600">Nombre Total de Représentations</Text>
+          <Text fontSize="sm" color="var(--text-secondary)">Nombre Total de Représentations</Text>
           {isLoading ? (
             <Skeleton height="24px" width="80px" />
           ) : (
@@ -26,7 +26,7 @@ const TourStats: FC<TourStatsProps> = ({ tours, isLoading }) => {
         </Box>
 
         <Box>
-          <Text fontSize="sm" color="gray.600">Revenu Total</Text>
+          <Text fontSize="sm" color="var(--text-secondary)">Revenu Total</Text>
           {isLoading ? (
             <Skeleton height="24px" width="120px" />
           ) : (
@@ -35,7 +35,7 @@ const TourStats: FC<TourStatsProps> = ({ tours, isLoading }) => {
         </Box>
 
         <Box>
-          <Text fontSize="sm" color="gray.600">Taux de Remplissage Moyen</Text>
+          <Text fontSize="sm" color="var(--text-secondary)">Taux de Remplissage Moyen</Text>
           {isLoading ? (
             <Skeleton height="24px" width="100%" />
           ) : (
