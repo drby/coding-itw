@@ -125,3 +125,31 @@ Pour soumettre votre travail :
    - Une description des fonctionnalités implémentées
 
 **Bon courage !**
+
+## Instructions d'exécution
+
+### Prérequis
+
+- Node.js version 18.0.0 ou supérieure
+- npm version 8.0.0 ou supérieure
+
+### Installation
+
+```bash
+npm install
+```
+
+### Exécution de l'application
+
+```bash
+npm run dev
+```
+
+L'application sera accessible à l'adresse [http://localhost:5173](http://localhost:5173).
+
+### Démarrage du serveur API backend
+
+```bash
+cd api
+deno task dev
+```
