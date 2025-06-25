@@ -1,4 +1,3 @@
-export { default } from './Dashboard';
 export { default as SearchBar } from './SearchBar';
 export { default as StatusFilter } from './StatusFilter';
 export { default as TourCard } from './TourCard';
