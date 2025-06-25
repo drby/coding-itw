@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { toaster } from '@/components/ui/utils/toast-utils';
 import type { Performance } from '@/types';
-import { useForm } from '@/hooks/useForm';
+import { useForm } from '@/hooks';
 import { validatePerformanceForm, type PerformanceForm } from '@/components/TourDetails/forms/performanceForm';
 
 interface AddPerformanceFormModalProps {

@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom"
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react"
 import { ThemeProvider } from "next-themes"
 
+import { AppProvider } from "./context"
 import App from "./App"
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -13,7 +14,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <ChakraProvider value={defaultSystem}>
         <ThemeProvider attribute="class" disableTransitionOnChange>
-          <App />
+          <AppProvider>
+            <App />
+          </AppProvider>
         </ThemeProvider>
       </ChakraProvider>
     </BrowserRouter>

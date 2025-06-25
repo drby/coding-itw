@@ -1,13 +1,15 @@
 import { useState, type FC } from 'react';
 import { useParams } from 'react-router-dom';
-import { IoArrowBack, IoAdd } from 'react-icons/io5';
+
+import { useAppContext } from "@/context";
+import { useTour } from "@/hooks";
 
 import {
   Box, Button, Heading, Text, Spinner,
   Badge, Grid, Flex
 } from "@chakra-ui/react";
+import { IoArrowBack, IoAdd } from 'react-icons/io5';
 
-import { useTour } from "@/hooks";
 import { getStatusColor } from "@/utils";
 import { FillRateDisplay } from "@/components/common";
 import { PerformanceList, AddPerformanceFormModal } from "@/components/TourDetails";
@@ -21,7 +23,7 @@ const TourDetails: FC<TourDetailsProps> = ({ onBack }) => {
   const { tourId } = useParams<{ tourId: string }>();
   const { tour, loading, error } = useTour(tourId || '');
   const [modalOpen, setModalOpen] = useState(false);
-  const [localPerformances, setLocalPerformances] = useState<Performance[]>([]);
+  const { getPerformances, addPerformance } = useAppContext();
 
   if (!tourId) {
     return (
@@ -75,13 +77,13 @@ const TourDetails: FC<TourDetailsProps> = ({ onBack }) => {
   }
 
   const handleAddPerformance = (newPerformance: Omit<Performance, 'id'>) => {
-    setLocalPerformances(prev => [
-      ...prev,
-      { ...newPerformance, id: `local-${Date.now()}` }
-    ]);
+    if (tourId) {
+      addPerformance(tourId, newPerformance);
+    }
   };
 
-  const allPerformances = [...(tour.performances || []), ...localPerformances];
+  const userPerformances = tourId ? getPerformances(tourId) : [];
+  const allPerformances = [...(tour?.performances || []), ...userPerformances];
 
   return (
     <Box>

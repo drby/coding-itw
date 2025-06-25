@@ -1,14 +1,6 @@
-/**
- * Utility functions for determining colors based on status and metrics
- */
 
-/**
- * Determines badge color based on tour status
- * @param status - Tour status string
- * @returns Color palette name for the badge
- */
 export const getStatusColor = (status: string): string => {
-  // Normalize status by trimming and converting to lowercase
+
   const normalizedStatus = status.trim().toLowerCase();
 
   switch (normalizedStatus) {
@@ -34,11 +26,7 @@ export const getStatusColor = (status: string): string => {
   }
 };
 
-/**
- * Determines badge color based on fill rate percentage
- * @param fillRate - Fill rate percentage (0-100)
- * @returns Color palette name for the badge
- */
+
 export const getAverageFillRateColor = (fillRate: number): string => {
   if (fillRate >= 90) return 'green';
   if (fillRate >= 70) return 'teal';

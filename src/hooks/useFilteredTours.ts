@@ -10,7 +10,7 @@ export const useFilteredTours = (
   return useMemo(() => {
     let filtered = [...tours];
 
-    // Status filtering
+
     if (statusFilter !== 'all') {
       const statusMap = {
         'planifiée': ['planifiée', 'planifiee', 'planned'],
@@ -25,7 +25,7 @@ export const useFilteredTours = (
       );
     }
 
-    // Search filtering
+
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       filtered = filtered.filter(tour =>
